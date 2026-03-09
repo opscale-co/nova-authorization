@@ -34,20 +34,27 @@ class RoleTag extends Tag
     {
         return function () use ($model, $attribute, $request, $requestAttribute): void {
             $newRoleIds = collect($this->prepareRelations($request, $requestAttribute))
-                ->map(fn ($id) => (int) $id)
+                ->map(fn ($id) => $id)
                 ->all();
-
+            
             $currentRoleIds = $model->{$attribute}()->pluck('id')->all();
 
-            $toAttach = array_diff($newRoleIds, $currentRoleIds);
-            $toDetach = array_diff($currentRoleIds, $newRoleIds);
+            $toAttach = collect($newRoleIds)
+                ->diff($currentRoleIds)
+                ->values()
+                ->all();
+                
+            $toDetach = collect($currentRoleIds)
+                ->diff($newRoleIds)
+                ->values()
+                ->all();
 
             if (! empty($toAttach)) {
                 $model->assignRole($toAttach);
             }
 
-            foreach ($toDetach as $roleId) {
-                $model->removeRole($roleId);
+            if(! empty($toDetach)) {
+                $model->removeRole($toDetach);
             }
         };
     }
