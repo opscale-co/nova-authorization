@@ -2,6 +2,11 @@
 
 All notable changes to opscale-co/nova-api will be documented in this file.
 
+## <small>1.1.1 (2026-03-09)</small>
+
+* Merge pull request #6 from findex-la/main ([79c8a9c](https://github.com/opscale-co/nova-authorization/commit/79c8a9c)), closes [#6](https://github.com/opscale-co/nova-authorization/issues/6)
+* fix(roletag): refactor role assignment logic to improve clarity and efficiency ([8ebb747](https://github.com/opscale-co/nova-authorization/commit/8ebb747))
+
 ## 1.1.0 (2026-03-09)
 
 * Merge pull request #5 from findex-la/main ([d6787a0](https://github.com/opscale-co/nova-authorization/commit/d6787a0)), closes [#5](https://github.com/opscale-co/nova-authorization/issues/5)
