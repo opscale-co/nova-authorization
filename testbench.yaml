@@ -1,41 +1,42 @@
-laravel: '@testbench'
+laravel: "@testbench"
 
 env:
-  CACHE_STORE: array
+    CACHE_STORE: array
 
 migrations:
-  - workbench/database/migrations
+    - workbench/database/migrations
 
 providers:
-  - Laravel\Nova\NovaCoreServiceProvider
-  - Laravel\Nova\NovaServiceProvider
-  - Workbench\App\Providers\WorkbenchServiceProvider
-  - Workbench\App\Providers\NovaServiceProvider
-  - Opscale\NovaAuthorization\ToolServiceProvider
+    - Laravel\Nova\NovaCoreServiceProvider
+    - Laravel\Nova\NovaServiceProvider
+    - Workbench\App\Providers\WorkbenchServiceProvider
+    - Workbench\App\Providers\NovaServiceProvider
+    - Opscale\NovaAuthorization\ToolServiceProvider
 
 seeders:
-  - Workbench\Database\Seeders\DatabaseSeeder
+    - Workbench\Database\Seeders\DatabaseSeeder
 
 workbench:
-  start: /nova
-  build:
-    - package:discover
-    - asset-publish
-    - vendor:publish:
-        --provider: Spatie\Permission\PermissionServiceProvider
-    - create-sqlite-db
-    - db:wipe
-    - migrate:refresh
-    - nova-authorization:install:
-        --no-interaction: true
-    - configure-permissions
-    - sync-resources
-    - create-permissions
-  assets:
-    - nova-assets
-  sync: []
+    start: /nova
+    build:
+        - package:discover
+        - asset-publish
+        - vendor:publish:
+              --provider: Spatie\Permission\PermissionServiceProvider
+        - nova-authorization:modify-permission-migration
+        - create-sqlite-db
+        - db:wipe
+        - migrate:refresh
+        - nova-authorization:install:
+              --no-interaction: true
+        - configure-permissions
+        - sync-resources
+        - create-permissions
+    assets:
+        - nova-assets
+    sync: []
 
 purge:
-  directories:
-    - lang/*
-    - public/vendor/*
+    directories:
+        - lang/*
+        - public/vendor/*

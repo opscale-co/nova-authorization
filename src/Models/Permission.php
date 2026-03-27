@@ -3,11 +3,12 @@
 namespace Opscale\NovaAuthorization\Models;
 
 use Enigma\ValidatorTrait;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Spatie\Permission\Models\Permission as SpatiePermission;
 
 class Permission extends SpatiePermission
 {
-    use ValidatorTrait;
+    use ValidatorTrait, HasUlids;
 
     /**
      * @var array<string, array<int, string>>

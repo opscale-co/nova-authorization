@@ -14,6 +14,7 @@ use Opscale\NovaAuthorization\Services\Actions\ClearCache;
 use Opscale\NovaAuthorization\Services\Actions\ConfigurePermissions;
 use Opscale\NovaAuthorization\Services\Actions\CreatePermissions;
 use Opscale\NovaAuthorization\Services\Actions\CreateRole;
+use Opscale\NovaAuthorization\Services\Actions\ModifyPermissionMigration;
 use Opscale\NovaAuthorization\Services\Actions\SyncResources;
 use Opscale\NovaPackageTools\NovaPackage;
 use Opscale\NovaPackageTools\NovaPackageServiceProvider;
@@ -40,6 +41,7 @@ class ToolServiceProvider extends NovaPackageServiceProvider
                 ConfigurePermissions::class,
                 CreatePermissions::class,
                 CreateRole::class,
+                ModifyPermissionMigration::class,
                 SyncResources::class,
             ])
             /** @phpstan-ignore argument.type */
