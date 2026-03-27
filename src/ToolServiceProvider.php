@@ -102,7 +102,7 @@ class ToolServiceProvider extends NovaPackageServiceProvider
         });
 
         $binding = $resource::uriKey() . '-policy';
-        $this->app->bindIf($binding, function ($app) use ($class, $resource): object {
+        $this->app->bind($binding, function ($app) use ($class, $resource): object {
             $instance = new $class;
             $instance->setResource($resource::singularLabel());
 
@@ -110,7 +110,7 @@ class ToolServiceProvider extends NovaPackageServiceProvider
         });
 
         /** @var class-string */
-        return $this->app->getAlias($binding);
+        return $binding;
     }
 
     private function registerEventListeners(): void
