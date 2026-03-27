@@ -2,6 +2,11 @@
 
 All notable changes to opscale-co/nova-api will be documented in this file.
 
+## <small>1.1.2 (2026-03-27)</small>
+
+* Merge branch 'main' of https://github.com/opscale-co/nova-authorization ([326eb46](https://github.com/opscale-co/nova-authorization/commit/326eb46))
+* fix(muti tenant support): fixed how policies are registered ([de9df4b](https://github.com/opscale-co/nova-authorization/commit/de9df4b))
+
 ## <small>1.1.1 (2026-03-09)</small>
 
 * Merge pull request #6 from findex-la/main ([79c8a9c](https://github.com/opscale-co/nova-authorization/commit/79c8a9c)), closes [#6](https://github.com/opscale-co/nova-authorization/issues/6)
