@@ -2,6 +2,8 @@ laravel: "@testbench"
 
 env:
     CACHE_STORE: array
+    LOG_CHANNEL: single
+    LOG_LEVEL: debug
 
 migrations:
     - workbench/database/migrations
@@ -23,7 +25,7 @@ workbench:
         - asset-publish
         - vendor:publish:
               --provider: Spatie\Permission\PermissionServiceProvider
-        - nova-authorization:modify-permission-migration
+        - modify-permission-migration
         - create-sqlite-db
         - db:wipe
         - migrate:refresh

@@ -87,7 +87,9 @@ final class CheckPermission extends Action
 
     private function checkWithCache(Authenticatable $user, string $action, string $resource): bool
     {
-        $cacheKey = $this->generateCacheKey($user, $action, $resource);
+        $userId = (string) $user->getAuthIdentifier();
+        $version = (int) Cache::get("opscale.authorization.user.{$userId}.v", 0);
+        $cacheKey = $this->generateCacheKey($user, $action, $resource, $version);
         $ttl = (int) Config::get('nova-authorization.cache_ttl', 24);
 
         /** @var bool $result */
@@ -104,12 +106,10 @@ final class CheckPermission extends Action
     {
         $permission = sprintf('%s %s', $action, $resource);
 
-        // Check if user has the checkPermissionTo method (from Spatie Permission trait)
         if (method_exists($user, 'checkPermissionTo')) {
             return $user->checkPermissionTo($permission);
         }
 
-        // Fallback to standard can method
         if (method_exists($user, 'can')) {
             return $user->can($permission);
         }
@@ -117,12 +117,11 @@ final class CheckPermission extends Action
         return false;
     }
 
-    private function generateCacheKey(Authenticatable $user, string $action, string $resource): string
+    private function generateCacheKey(Authenticatable $user, string $action, string $resource, int $version = 0): string
     {
         $userId = (string) $user->getAuthIdentifier();
-        $base = 'opscale.authorization.user.' . $userId . '.';
         $permission = sprintf('%s %s', $action, $resource);
 
-        return $base . str()->slug($permission, '.');
+        return "opscale.authorization.user.{$userId}.v{$version}." . str()->slug($permission, '.');
     }
 }

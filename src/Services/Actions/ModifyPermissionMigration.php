@@ -72,7 +72,7 @@ final class ModifyPermissionMigration extends Action
      */
     private function findPermissionMigration(): ?string
     {
-        $migrationDir = base_path('vendor/orchestra/testbench-core/laravel/database/migrations');
+        $migrationDir = database_path('migrations');
 
         if (! File::isDirectory($migrationDir)) {
             return null;

@@ -3,8 +3,6 @@
 namespace Opscale\NovaAuthorization\Services\Actions;
 
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Redis;
 use Opscale\Actions\Action;
 use Spatie\Permission\Events\RoleAttached;
 use Spatie\Permission\Events\RoleDetached;
@@ -53,11 +51,7 @@ final class ClearCache extends Action
         /** @var string $userId */
         $userId = $validated['userId'];
 
-        if (Config::get('cache.default') === 'redis') {
-            $this->clearCacheByPrefix($userId);
-        } else {
-            Cache::flush();
-        }
+        Cache::increment("opscale.authorization.user.{$userId}.v");
 
         return [
             'success' => true,
@@ -69,22 +63,5 @@ final class ClearCache extends Action
     {
         $userId = $event->model->getKey();
         $this->handle(['userId' => (string) $userId]);
-    }
-
-    private function clearCacheByPrefix(string $userId): void
-    {
-        /** @var string $connectionName */
-        $connectionName = Config::get('cache.stores.redis.connection', 'default');
-        /** @var \Illuminate\Redis\Connections\Connection $connection */
-        $connection = Redis::connection($connectionName);
-
-        $prefix = 'opscale.authorization.user.' . $userId;
-
-        /** @var array<string> $keys */
-        $keys = $connection->keys($prefix . '.*');
-
-        foreach ($keys as $key) {
-            Cache::forget($key);
-        }
     }
 }
