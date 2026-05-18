@@ -2,6 +2,11 @@
 
 All notable changes to opscale-co/nova-api will be documented in this file.
 
+## <small>1.1.3 (2026-05-18)</small>
+
+* Merge pull request #9 from findex-la/main ([06db3f0](https://github.com/opscale-co/nova-authorization/commit/06db3f0)), closes [#9](https://github.com/opscale-co/nova-authorization/issues/9)
+* fix(cache): update cache key generation and simplify cache clearing logic ([828d842](https://github.com/opscale-co/nova-authorization/commit/828d842))
+
 ## <small>1.1.2 (2026-03-27)</small>
 
 * Merge branch 'main' of https://github.com/opscale-co/nova-authorization ([326eb46](https://github.com/opscale-co/nova-authorization/commit/326eb46))
