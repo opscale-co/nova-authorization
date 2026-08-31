@@ -31,18 +31,30 @@ final class ConfigurePermissions extends Action
     }
 
     /**
-     * @param  array<string, mixed>  $attributes
-     * @return array{success: bool, message: string}
+     * @return array<int, array{name: string, description: string, type: string, rules: array<string>}>
      */
-    final public function handle(array $attributes = []): array
+    final public function outputs(): array
+    {
+        return [
+            [
+                'name' => 'message',
+                'description' => 'Human-readable result of the configuration change',
+                'type' => 'string',
+                'rules' => ['required', 'string'],
+            ],
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $inputs
+     * @return array<string, mixed>
+     */
+    final public function handle(array $inputs = []): array
     {
         $configPath = config_path('permission.php');
 
         if (! File::exists($configPath)) {
-            return [
-                'success' => false,
-                'message' => 'Permission config file not found. Please publish it first.',
-            ];
+            return $this->fail('Permission config file not found. Please publish it first.');
         }
 
         $config = File::get($configPath);
@@ -59,15 +71,13 @@ final class ConfigurePermissions extends Action
         if ($config !== $modified) {
             File::put($configPath, $modified);
 
-            return [
-                'success' => true,
+            return $this->succeed([
                 'message' => 'Permission configuration updated successfully.',
-            ];
+            ]);
         }
 
-        return [
-            'success' => true,
+        return $this->succeed([
             'message' => 'Permission configuration is already up to date.',
-        ];
+        ]);
     }
 }

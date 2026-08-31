@@ -53,20 +53,32 @@ final class CheckPermission extends Action
     }
 
     /**
-     * @param  array<string, mixed>  $attributes
-     * @return array{success: bool, result: bool}
+     * @return array<int, array{name: string, description: string, type: string, rules: array<string>}>
      */
-    final public function handle(array $attributes = []): array
+    final public function outputs(): array
     {
-        $this->fill($attributes);
-        $validated = $this->validateAttributes();
+        return [
+            [
+                'name' => 'result',
+                'description' => 'Whether the user has the permission',
+                'type' => 'boolean',
+                'rules' => ['required', 'boolean'],
+            ],
+        ];
+    }
 
+    /**
+     * @param  array<string, mixed>  $inputs
+     * @return array<string, mixed>
+     */
+    final public function handle(array $inputs = []): array
+    {
         /** @var Authenticatable $user */
-        $user = $validated['user'];
+        $user = $inputs['user'];
         /** @var string $action */
-        $action = $validated['action'];
+        $action = $inputs['action'];
         /** @var string $resource */
-        $resource = $validated['resource'];
+        $resource = $inputs['resource'];
 
         if ($this->shouldUseCache()) {
             $result = $this->checkWithCache($user, $action, $resource);
@@ -74,10 +86,9 @@ final class CheckPermission extends Action
             $result = $this->checkPermission($user, $action, $resource);
         }
 
-        return [
-            'success' => true,
+        return $this->succeed([
             'result' => $result,
-        ];
+        ]);
     }
 
     private function shouldUseCache(): bool

@@ -28,11 +28,11 @@
     }
   ],
   "require": {
-    "php": ">=8.2",
-    "opscale-co/actions": "^1.0",
-    "opscale-co/nova-package-tools": "^1.0",
-    "spatie/laravel-permission": "^6.12",
-    "theriddleofenigma/laravel-model-validation": "^1.6"
+    "php": "^8.3",
+    "opscale-co/actions": "^3.0",
+    "opscale-co/nova-package-tools": "^1.1",
+    "opscale-co/validations": "^1.0",
+    "spatie/laravel-permission": "^8.3"
   },
   "autoload": {
     "psr-4": {
@@ -63,16 +63,16 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require-dev": {
-    "driftingly/rector-laravel": "^2.0",
-    "larastan/larastan": "^3.7",
-    "laravel/nova": "^5.3",
-    "laravel/nova-devtool": "^1.0",
+    "driftingly/rector-laravel": "^2.6",
+    "larastan/larastan": "^3.10",
+    "laravel/nova": "^5.10",
+    "laravel/nova-devtool": "^1.10",
     "mockery/mockery": "^1.6",
-    "opscale-co/strict-rules": "^1.1",
-    "phpstan/phpstan": "^2.1",
-    "phpunit/phpunit": "^10.5",
-    "rector/rector": "^2.1",
-    "tightenco/duster": "^2.7"
+    "opscale-co/strict-rules": "^1.3",
+    "phpstan/phpstan": "^2.2",
+    "phpunit/phpunit": "^12.5",
+    "rector/rector": "^2.6",
+    "tightenco/duster": "^3.4"
   },
   "scripts": {
     "post-autoload-dump": [

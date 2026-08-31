@@ -2,13 +2,13 @@
 
 namespace Opscale\NovaAuthorization\Models;
 
-use Enigma\ValidatorTrait;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Opscale\Validations\Validatable;
 use Spatie\Permission\Models\Role as SpatieRole;
 
 class Role extends SpatieRole
 {
-    use ValidatorTrait, HasUlids;
+    use HasUlids, Validatable;
 
     /**
      * @var array<string, array<int, string>>

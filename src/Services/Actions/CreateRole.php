@@ -44,32 +44,48 @@ final class CreateRole extends Action
     }
 
     /**
-     * @param  array<string, mixed>  $attributes
-     * @return array{success: bool, message: string, role?: string}
+     * @return array<int, array{name: string, description: string, type: string, rules: array<string>}>
      */
-    final public function handle(array $attributes = []): array
+    final public function outputs(): array
     {
-        $this->fill($attributes);
-        $validated = $this->validateAttributes();
+        return [
+            [
+                'name' => 'message',
+                'description' => 'Human-readable result of the role creation',
+                'type' => 'string',
+                'rules' => ['required', 'string'],
+            ],
+            [
+                'name' => 'role',
+                'description' => 'The name of the created role',
+                'type' => 'string',
+                'rules' => ['required', 'string'],
+            ],
+        ];
+    }
 
+    /**
+     * @param  array<string, mixed>  $inputs
+     * @return array<string, mixed>
+     */
+    final public function handle(array $inputs = []): array
+    {
         /** @var string $roleName */
-        $roleName = $validated['name'];
+        $roleName = $inputs['name'];
         /** @var array<string> $permissions */
-        $permissions = $validated['permissions'];
+        $permissions = $inputs['permissions'];
 
         $role = config('permission.models.role')::query()->firstOrCreate([
             'name' => $roleName,
             'guard_name' => 'web',
         ]);
-        $roleClass = config('permission.models.role');
 
         $this->assignPermissions($role, $permissions);
 
-        return [
-            'success' => true,
+        return $this->succeed([
             'message' => sprintf('Role "%s" created successfully.', $roleName),
             'role' => $roleName,
-        ];
+        ]);
     }
 
     /**
@@ -108,7 +124,7 @@ final class CreateRole extends Action
 
             foreach (str_split(strtoupper($codes)) as $letter) {
                 if (array_key_exists($letter, $permissionsMap)) {
-                    $permissionName = $permissionsMap[$letter].' '.$resourceName;
+                    $permissionName = $permissionsMap[$letter] . ' ' . $resourceName;
 
                     $permission = config('permission.models.permission')::query()->firstOrCreate([
                         'name' => $permissionName,

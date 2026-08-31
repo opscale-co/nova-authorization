@@ -60,18 +60,36 @@ final class SyncResources extends Action
     }
 
     /**
-     * @param  array<string, mixed>  $attributes
-     * @return array{success: bool, message: string, resources?: array<int, array{label: string, uri_key: string, model: string}>}
+     * @return array<int, array{name: string, description: string, type: string, rules: array<string>}>
      */
-    final public function handle(array $attributes = []): array
+    final public function outputs(): array
     {
-        $this->fill($attributes);
-        $validated = $this->validateAttributes();
+        return [
+            [
+                'name' => 'message',
+                'description' => 'Human-readable result of the resource sync',
+                'type' => 'string',
+                'rules' => ['required', 'string'],
+            ],
+            [
+                'name' => 'resources',
+                'description' => 'The synced resources (label, uri_key, model)',
+                'type' => 'array',
+                'rules' => ['array'],
+            ],
+        ];
+    }
 
+    /**
+     * @param  array<string, mixed>  $inputs
+     * @return array<string, mixed>
+     */
+    final public function handle(array $inputs = []): array
+    {
         /** @var string|null $filterString */
-        $filterString = $validated['filter'] ?? null;
+        $filterString = $inputs['filter'] ?? null;
         /** @var string|null $excludeString */
-        $excludeString = $validated['exclude'] ?? null;
+        $excludeString = $inputs['exclude'] ?? null;
 
         /** @var array<int, string> $filters */
         $filters = $filterString ? array_filter(explode(',', $filterString)) : [];
@@ -88,14 +106,10 @@ final class SyncResources extends Action
         ServingNova::dispatch($this->application, $request);
 
         if ($this->discoveredResources === []) {
-            return [
-                'success' => false,
-                'message' => 'No Nova resources found or no resources match the filter criteria.',
-            ];
+            return $this->fail('No Nova resources found or no resources match the filter criteria.');
         }
 
-        return [
-            'success' => true,
+        return $this->succeed([
             'message' => 'Successfully synced ' . count($this->discoveredResources) . ' resources to config/nova-authorization.php',
             'resources' => array_map(function (string $resource): array {
                 return [
@@ -104,7 +118,7 @@ final class SyncResources extends Action
                     'model' => $resource::$model,
                 ];
             }, $this->discoveredResources),
-        ];
+        ]);
     }
 
     /**

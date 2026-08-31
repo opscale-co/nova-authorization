@@ -31,28 +31,39 @@ final class ModifyPermissionMigration extends Action
     }
 
     /**
-     * @param  array<string, mixed>  $attributes
-     * @return array{success: bool, message: string}
+     * @return array<int, array{name: string, description: string, type: string, rules: array<string>}>
      */
-    final public function handle(array $attributes = []): array
+    final public function outputs(): array
+    {
+        return [
+            [
+                'name' => 'message',
+                'description' => 'Human-readable result of the migration modification',
+                'type' => 'string',
+                'rules' => ['required', 'string'],
+            ],
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $inputs
+     * @return array<string, mixed>
+     */
+    final public function handle(array $inputs = []): array
     {
         $migrationPath = $this->findPermissionMigration();
 
         if (! $migrationPath) {
-            return [
-                'success' => false,
-                'message' => 'Permission migration file not found. Please run vendor:publish first.',
-            ];
+            return $this->fail('Permission migration file not found. Please run vendor:publish first.');
         }
 
         $content = File::get($migrationPath);
 
         // Check if already modified
         if (str_contains($content, "->ulid('id')")) {
-            return [
-                'success' => true,
+            return $this->succeed([
                 'message' => 'Permission migration already modified to use ULIDs.',
-            ];
+            ]);
         }
 
         // Apply modifications
@@ -61,10 +72,9 @@ final class ModifyPermissionMigration extends Action
         // Write back to file
         File::put($migrationPath, $modifiedContent);
 
-        return [
-            'success' => true,
+        return $this->succeed([
             'message' => 'Permission migration successfully modified to use ULIDs.',
-        ];
+        ]);
     }
 
     /**

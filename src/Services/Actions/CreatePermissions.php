@@ -2,8 +2,10 @@
 
 namespace Opscale\NovaAuthorization\Services\Actions;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Opscale\Actions\Action;
+use Spatie\Permission\Contracts\Permission;
 
 final class CreatePermissions extends Action
 {
@@ -31,22 +33,40 @@ final class CreatePermissions extends Action
     }
 
     /**
-     * @param  array<string, mixed>  $attributes
-     * @return array{success: bool, message: string, created?: array<string>}
+     * @return array<int, array{name: string, description: string, type: string, rules: array<string>}>
      */
-    final public function handle(array $attributes = []): array
+    final public function outputs(): array
+    {
+        return [
+            [
+                'name' => 'message',
+                'description' => 'Human-readable result of the permission creation',
+                'type' => 'string',
+                'rules' => ['required', 'string'],
+            ],
+            [
+                'name' => 'created',
+                'description' => 'Resource labels for which permissions were created',
+                'type' => 'array',
+                'rules' => ['array'],
+            ],
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $inputs
+     * @return array<string, mixed>
+     */
+    final public function handle(array $inputs = []): array
     {
         /** @var array<class-string> $resources */
         $resources = Config::get('nova-authorization.resources', []);
 
         if (empty($resources)) {
-            return [
-                'success' => false,
-                'message' => 'No resources configured. Please add resources to nova-authorization config.',
-            ];
+            return $this->fail('No resources configured. Please add resources to nova-authorization config.');
         }
 
-        /** @var class-string<\Illuminate\Database\Eloquent\Model&\Spatie\Permission\Contracts\Permission> $permissionClass */
+        /** @var class-string<Model&Permission> $permissionClass */
         $permissionClass = Config::get('permission.models.permission');
 
         $permissions = [
@@ -62,7 +82,7 @@ final class CreatePermissions extends Action
         foreach ($resources as $resource) {
             $resourceName = $resource::singularLabel();
             foreach ($permissions as $permission) {
-                $name = $permission.' '.$resourceName;
+                $name = $permission . ' ' . $resourceName;
                 $permissionClass::query()->firstOrCreate([
                     'name' => $name,
                     'guard_name' => 'web',
@@ -71,10 +91,9 @@ final class CreatePermissions extends Action
             $created[] = $resourceName;
         }
 
-        return [
-            'success' => true,
+        return $this->succeed([
             'message' => 'Permissions created successfully.',
             'created' => $created,
-        ];
+        ]);
     }
 }

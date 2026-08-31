@@ -157,14 +157,13 @@ abstract class Policy
      */
     final protected function can($user, $model, string $action): bool
     {
-        /** @var array{success: bool, result: bool} $result */
         $result = CheckPermission::run([
             'user' => $user,
             'action' => $action,
             'resource' => $this->getResource(),
         ]);
 
-        return $result['result'];
+        return (bool) ($result->data()['result'] ?? false);
     }
 
     /**

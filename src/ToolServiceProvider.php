@@ -20,8 +20,8 @@ use Opscale\NovaPackageTools\NovaPackage;
 use Opscale\NovaPackageTools\NovaPackageServiceProvider;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
-use Spatie\Permission\Events\RoleAttached;
-use Spatie\Permission\Events\RoleDetached;
+use Spatie\Permission\Events\RoleAttachedEvent;
+use Spatie\Permission\Events\RoleDetachedEvent;
 
 class ToolServiceProvider extends NovaPackageServiceProvider
 {
@@ -118,12 +118,12 @@ class ToolServiceProvider extends NovaPackageServiceProvider
     private function registerEventListeners(): void
     {
         Event::listen(
-            RoleAttached::class,
+            RoleAttachedEvent::class,
             ClearCache::class
         );
 
         Event::listen(
-            RoleDetached::class,
+            RoleDetachedEvent::class,
             ClearCache::class
         );
     }

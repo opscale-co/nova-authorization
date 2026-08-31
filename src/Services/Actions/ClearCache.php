@@ -4,8 +4,8 @@ namespace Opscale\NovaAuthorization\Services\Actions;
 
 use Illuminate\Support\Facades\Cache;
 use Opscale\Actions\Action;
-use Spatie\Permission\Events\RoleAttached;
-use Spatie\Permission\Events\RoleDetached;
+use Spatie\Permission\Events\RoleAttachedEvent;
+use Spatie\Permission\Events\RoleDetachedEvent;
 
 final class ClearCache extends Action
 {
@@ -40,26 +40,37 @@ final class ClearCache extends Action
     }
 
     /**
-     * @param  array<string, mixed>  $attributes
-     * @return array{success: bool, message: string}
+     * @return array<int, array{name: string, description: string, type: string, rules: array<string>}>
      */
-    final public function handle(array $attributes = []): array
+    final public function outputs(): array
     {
-        $this->fill($attributes);
-        $validated = $this->validateAttributes();
-
-        /** @var string $userId */
-        $userId = $validated['userId'];
-
-        Cache::increment("opscale.authorization.user.{$userId}.v");
-
         return [
-            'success' => true,
-            'message' => 'Authorization cache cleared successfully.',
+            [
+                'name' => 'message',
+                'description' => 'Human-readable result of the cache clearing',
+                'type' => 'string',
+                'rules' => ['required', 'string'],
+            ],
         ];
     }
 
-    final public function asListener(RoleAttached|RoleDetached $event): void
+    /**
+     * @param  array<string, mixed>  $inputs
+     * @return array<string, mixed>
+     */
+    final public function handle(array $inputs = []): array
+    {
+        /** @var string $userId */
+        $userId = $inputs['userId'];
+
+        Cache::increment("opscale.authorization.user.{$userId}.v");
+
+        return $this->succeed([
+            'message' => 'Authorization cache cleared successfully.',
+        ]);
+    }
+
+    final public function asListener(RoleAttachedEvent|RoleDetachedEvent $event): void
     {
         $userId = $event->model->getKey();
         $this->handle(['userId' => (string) $userId]);

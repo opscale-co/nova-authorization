@@ -45,50 +45,54 @@ final class AssignRole extends Action
     }
 
     /**
-     * @param  array<string, mixed>  $attributes
-     * @return array{success: bool, message: string}
+     * @return array<int, array{name: string, description: string, type: string, rules: array<string>}>
      */
-    final public function handle(array $attributes = []): array
+    final public function outputs(): array
     {
-        $this->fill($attributes);
-        $validated = $this->validateAttributes();
+        return [
+            [
+                'name' => 'message',
+                'description' => 'Human-readable result of the role assignment',
+                'type' => 'string',
+                'rules' => ['required', 'string'],
+            ],
+        ];
+    }
 
+    /**
+     * @param  array<string, mixed>  $inputs
+     * @return array<string, mixed>
+     */
+    final public function handle(array $inputs = []): array
+    {
         /** @var string $userId */
-        $userId = $validated['userId'];
+        $userId = $inputs['userId'];
         /** @var string $roleName */
-        $roleName = $validated['roleName'];
+        $roleName = $inputs['roleName'];
 
         /** @var class-string $userClass */
         $userClass = Config::get('auth.providers.users.model');
 
         $user = $userClass::find($userId);
         if (! $user) {
-            return [
-                'success' => false,
-                'message' => sprintf('User with ID "%s" not found.', $userId),
-            ];
+            return $this->fail(sprintf('User with ID "%s" not found.', $userId));
         }
 
         $role = Role::where('name', $roleName)->first();
         if (! $role) {
-            return [
-                'success' => false,
-                'message' => sprintf('Role "%s" not found.', $roleName),
-            ];
+            return $this->fail(sprintf('Role "%s" not found.', $roleName));
         }
 
         if ($user->hasRole($role)) {
-            return [
-                'success' => true,
+            return $this->succeed([
                 'message' => sprintf('User already has role "%s".', $roleName),
-            ];
+            ]);
         }
 
         $user->assignRole($role);
 
-        return [
-            'success' => true,
+        return $this->succeed([
             'message' => sprintf('Role "%s" has been successfully assigned to user %s.', $roleName, $userId),
-        ];
+        ]);
     }
 }

@@ -6,6 +6,6 @@ includes:
     - vendor/opscale-co/strict-rules/rules.solid.neon
 parameters:
     level: 9
-    phpVersion: 80200
+    phpVersion: 80300
     paths:
         - src

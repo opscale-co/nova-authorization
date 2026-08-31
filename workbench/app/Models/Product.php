@@ -2,15 +2,15 @@
 
 namespace Workbench\App\Models;
 
-use Enigma\ValidatorTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Opscale\Validations\Validatable;
 use Workbench\Database\Factories\ProductFactory;
 
 class Product extends Model
 {
     /** @use HasFactory<ProductFactory> */
-    use HasFactory, ValidatorTrait;
+    use HasFactory, Validatable;
 
     /**
      * @var array<string, array<int, string>>

@@ -3,8 +3,10 @@
 namespace Opscale\NovaAuthorization\Nova\Fields;
 
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 use Laravel\Nova\Fields\Tag;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Support\Fluent;
 use Opscale\NovaAuthorization\Nova\Role;
 use Override;
 use Stringable;
@@ -25,9 +27,9 @@ class RoleTag extends Tag
      * Hydrate the given attribute on the model based on the incoming request.
      *
      * Uses assignRole/removeRole instead of sync() to ensure
-     * RoleAttached and RoleDetached events are fired.
+     * RoleAttachedEvent and RoleDetachedEvent events are fired.
      *
-     * @param  \Illuminate\Database\Eloquent\Model|\Laravel\Nova\Support\Fluent  $model
+     * @param  Model|Fluent  $model
      */
     #[Override]
     protected function fillAttributeFromRequest(NovaRequest $request, string $requestAttribute, object $model, string $attribute): Closure
@@ -36,14 +38,14 @@ class RoleTag extends Tag
             $newRoleIds = collect($this->prepareRelations($request, $requestAttribute))
                 ->map(fn ($id) => $id)
                 ->all();
-            
+
             $currentRoleIds = $model->{$attribute}()->pluck('id')->all();
 
             $toAttach = collect($newRoleIds)
                 ->diff($currentRoleIds)
                 ->values()
                 ->all();
-                
+
             $toDetach = collect($currentRoleIds)
                 ->diff($newRoleIds)
                 ->values()
@@ -53,7 +55,7 @@ class RoleTag extends Tag
                 $model->assignRole($toAttach);
             }
 
-            if(! empty($toDetach)) {
+            if (! empty($toDetach)) {
                 $model->removeRole($toDetach);
             }
         };
