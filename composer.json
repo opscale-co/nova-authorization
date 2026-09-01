@@ -1,7 +1,7 @@
 {
   "name": "opscale-co/nova-authorization",
   "description": "Secure your Nova resources with roles and permissions",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "keywords": [
     "laravel",
     "nova",

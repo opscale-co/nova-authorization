@@ -4,7 +4,6 @@ namespace Opscale\NovaAuthorization\Services\Actions;
 
 use Illuminate\Support\Facades\Config;
 use Opscale\Actions\Action;
-use Spatie\Permission\Models\Role;
 
 final class AssignRole extends Action
 {
@@ -78,7 +77,10 @@ final class AssignRole extends Action
             return $this->fail(sprintf('User with ID "%s" not found.', $userId));
         }
 
-        $role = Role::where('name', $roleName)->first();
+        /** @var class-string $roleClass */
+        $roleClass = Config::get('permission.models.role');
+
+        $role = $roleClass::where('name', $roleName)->first();
         if (! $role) {
             return $this->fail(sprintf('Role "%s" not found.', $roleName));
         }
