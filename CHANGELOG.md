@@ -2,6 +2,10 @@
 
 All notable changes to opscale-co/nova-api will be documented in this file.
 
+## <small>1.2.2 (2026-10-05)</small>
+
+* fix(deps): upgrade opscale-co/actions to ^4.1 ([5df8476](https://github.com/opscale-co/nova-authorization/commit/5df8476))
+
 ## 1.2.0 (2026-08-31)
 
 * feat(deps): require PHP 8.3, migrate to opscale-co/validations and actions v3 ([38a4d1b](https://github.com/opscale-co/nova-authorization/commit/38a4d1b))
