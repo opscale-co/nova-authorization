@@ -4,6 +4,7 @@ namespace Opscale\NovaAuthorization\Services\Actions;
 
 use Illuminate\Support\Facades\Cache;
 use Opscale\Actions\Action;
+use Override;
 use Spatie\Permission\Events\RoleAttachedEvent;
 use Spatie\Permission\Events\RoleDetachedEvent;
 
@@ -70,9 +71,29 @@ final class ClearCache extends Action
         ]);
     }
 
-    final public function asListener(RoleAttachedEvent|RoleDetachedEvent $event): void
+    /**
+     * Map the Spatie role event to the Action's declared parameters. The base
+     * adapter cannot derive `userId` from the event's public props (`model`,
+     * `rolesOrIds`), so we resolve it from the affected model's key.
+     *
+     * @param  array<int|string, mixed>  $arguments
+     * @return array<string, mixed>
+     */
+    #[Override]
+    protected function mapEventToInputs(array $arguments): array
     {
-        $userId = $event->model->getKey();
-        $this->handle(['userId' => (string) $userId]);
+        $inputs = parent::mapEventToInputs($arguments);
+
+        $event = $arguments[0] ?? null;
+
+        if ($event instanceof RoleAttachedEvent || $event instanceof RoleDetachedEvent) {
+            $key = $event->model->getKey();
+
+            if (is_scalar($key)) {
+                $inputs['userId'] = (string) $key;
+            }
+        }
+
+        return $inputs;
     }
 }
